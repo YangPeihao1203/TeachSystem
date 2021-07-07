@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.wumbuk.dao.TeacherMapper" >
+  <resultMap id="BaseResultMap" type="org.wumbuk.entity.Teacher" >
+    <id column="tId" property="tid" jdbcType="INTEGER" />
+    <result column="tName" property="tname" jdbcType="CHAR" />
+    <result column="tSex" property="tsex" jdbcType="INTEGER" />
+    <result column="tBirth" property="tbirth" jdbcType="TIMESTAMP" />
+    <result column="tEdu" property="tedu" jdbcType="CHAR" />
+    <result column="tTitle" property="ttitle" jdbcType="CHAR" />
+    <result column="tEntryTime" property="tentrytime" jdbcType="TIMESTAMP" />
+    <result column="tDepature" property="tdepature" jdbcType="INTEGER" />
+    <result column="avatar" property="avatar" jdbcType="CHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    tId, tName, tSex, tBirth, tEdu, tTitle, tEntryTime, tDepature
+  </sql>
+
+
+
+
+  <select id="selectTeacherFuzzy" resultMap="BaseResultMap" parameterType="string" >
+    SELECT *
+    FROM `teacher`
+    WHERE 	tDepature IN (SELECT dId
+                           FROM `depature`
+                           WHERE dName LIKE concat('%',#{keyWord},'%')  )
+       OR (tid=#{keyWord})
+       OR (tName LIKE concat('%',#{keyWord},'%') )
+       OR (tEdu LIKE concat('%',#{keyWord},'%') )
+       OR (tTiTle LIKE concat('%',#{keyWord},'%') )
+  </select>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from teacher
+    where tId = #{tid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from teacher
+    where tId = #{tid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="org.wumbuk.entity.Teacher" >
+    insert into teacher (tId, tName, tSex, 
+      tBirth, tEdu, tTitle, tEntryTime, 
+      tDepature)
+    values (#{tid,jdbcType=INTEGER}, #{tname,jdbcType=CHAR}, #{tsex,jdbcType=INTEGER}, 
+      #{tbirth,jdbcType=TIMESTAMP}, #{tedu,jdbcType=CHAR}, #{ttitle,jdbcType=CHAR}, #{tentrytime,jdbcType=TIMESTAMP}, 
+      #{tdepature,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="org.wumbuk.entity.Teacher" >
+    insert into teacher
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="tid != null" >
+        tId,
+      </if>
+      <if test="tname != null" >
+        tName,
+      </if>
+      <if test="tsex != null" >
+        tSex,
+      </if>
+      <if test="tbirth != null" >
+        tBirth,
+      </if>
+      <if test="tedu != null" >
+        tEdu,
+      </if>
+      <if test="ttitle != null" >
+        tTitle,
+      </if>
+      <if test="tentrytime != null" >
+        tEntryTime,
+      </if>
+      <if test="tdepature != null" >
+        tDepature,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="tid != null" >
+        #{tid,jdbcType=INTEGER},
+      </if>
+      <if test="tname != null" >
+        #{tname,jdbcType=CHAR},
+      </if>
+      <if test="tsex != null" >
+        #{tsex,jdbcType=INTEGER},
+      </if>
+      <if test="tbirth != null" >
+        #{tbirth,jdbcType=TIMESTAMP},
+      </if>
+      <if test="tedu != null" >
+        #{tedu,jdbcType=CHAR},
+      </if>
+      <if test="ttitle != null" >
+        #{ttitle,jdbcType=CHAR},
+      </if>
+      <if test="tentrytime != null" >
+        #{tentrytime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="tdepature != null" >
+        #{tdepature,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="org.wumbuk.entity.Teacher" >
+    update teacher
+    <set >
+      <if test="tname != null" >
+        tName = #{tname,jdbcType=CHAR},
+      </if>
+      <if test="tsex != null" >
+        tSex = #{tsex,jdbcType=INTEGER},
+      </if>
+      <if test="tbirth != null" >
+        tBirth = #{tbirth,jdbcType=TIMESTAMP},
+      </if>
+      <if test="tedu != null" >
+        tEdu = #{tedu,jdbcType=CHAR},
+      </if>
+      <if test="ttitle != null" >
+        tTitle = #{ttitle,jdbcType=CHAR},
+      </if>
+      <if test="tentrytime != null" >
+        tEntryTime = #{tentrytime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="tdepature != null" >
+        tDepature = #{tdepature,jdbcType=INTEGER},
+      </if>
+      <if test="avatar != null" >
+        avatar = #{tdepature,jdbcType=CHAR},
+      </if>
+    </set>
+    where tId = #{tid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="org.wumbuk.entity.Teacher" >
+    update teacher
+    set tName = #{tname,jdbcType=CHAR},
+      tSex = #{tsex,jdbcType=INTEGER},
+      tBirth = #{tbirth,jdbcType=TIMESTAMP},
+      tEdu = #{tedu,jdbcType=CHAR},
+      tTitle = #{ttitle,jdbcType=CHAR},
+      tEntryTime = #{tentrytime,jdbcType=TIMESTAMP},
+      tDepature = #{tdepature,jdbcType=INTEGER}
+    where tId = #{tid,jdbcType=INTEGER}
+  </update>
+</mapper>

@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.wumbuk.dao.CourseMapper" >
+  <resultMap id="BaseResultMap" type="org.wumbuk.entity.Course" >
+    <id column="cId" property="cid" jdbcType="INTEGER" />
+    <result column="cName" property="cname" jdbcType="CHAR" />
+    <result column="cTime" property="ctime" jdbcType="INTEGER" />
+    <result column="cPlace" property="cplace" jdbcType="CHAR" />
+    <result column="cWeek" property="cweek" jdbcType="INTEGER" />
+    <result column="cType" property="ctype" jdbcType="INTEGER" />
+    <result column="cValue" property="cvalue" jdbcType="INTEGER" />
+    <result column="dId" property="did" jdbcType="INTEGER" />
+  </resultMap>
+
+
+  <resultMap id="BaseResultMap2" type="org.wumbuk.entity.Course" >
+    <id column="cId" property="cid" jdbcType="INTEGER" />
+    <result column="cName" property="cname" jdbcType="CHAR" />
+    <result column="cTime" property="ctime" jdbcType="INTEGER" />
+    <result column="cPlace" property="cplace" jdbcType="CHAR" />
+    <result column="cWeek" property="cweek" jdbcType="INTEGER" />
+    <result column="cType" property="ctype" jdbcType="INTEGER" />
+    <result column="cValue" property="cvalue" jdbcType="INTEGER" />
+    <result column="dId" property="did" jdbcType="INTEGER" />
+    <result column="tId" property="tid" jdbcType="INTEGER" />
+  </resultMap>
+
+  <resultMap id="BaseResultMap3" type="org.wumbuk.entity.Course" >
+    <id column="cId" property="cid" jdbcType="INTEGER" />
+    <result column="cName" property="cname" jdbcType="CHAR" />
+    <result column="cTime" property="ctime" jdbcType="INTEGER" />
+    <result column="cPlace" property="cplace" jdbcType="CHAR" />
+    <result column="cWeek" property="cweek" jdbcType="INTEGER" />
+    <result column="cType" property="ctype" jdbcType="INTEGER" />
+    <result column="cValue" property="cvalue" jdbcType="INTEGER" />
+    <result column="dId" property="did" jdbcType="INTEGER" />
+    <result column="tId" property="tid" jdbcType="INTEGER" />
+    <result column="score" property="score" jdbcType="REAL" />
+  </resultMap>
+
+
+
+
+  <sql id="Base_Column_List" >
+    cId, cName, cTime, cPlace, cWeek, cType, cValue, dId
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    from course
+    where cId = #{cid,jdbcType=INTEGER}
+  </select>
+
+  <select id="selectAllCourse" resultMap="BaseResultMap2" >
+    SELECT DISTINCT `course`.*,tId
+    FROM `course`,`teachr-course`
+    WHERE `course`.`cId`=`teachr-course`.`cId`
+  </select>
+
+
+
+
+
+  <select id="getAllCourseByTeacher" resultMap="BaseResultMap2" parameterType="java.lang.Integer" >
+    SELECT DISTINCT  *
+    FROM
+      (SELECT `course`.*,tId
+       FROM `course`,`teachr-course`
+       WHERE `course`.`cId`=`teachr-course`.`cId` ) A
+    WHERE tId=#{tid}
+  </select>
+
+
+
+
+  <select id="checkCourseFuzzyTeacher" resultMap="BaseResultMap2"  >
+    SELECT *
+    FROM
+      (SELECT `course`.*,tId
+       FROM `course`,`teachr-course`
+       WHERE `course`.`cId`=`teachr-course`.`cId` ) A
+    WHERE tId=#{param1}
+    AND cName LIKE concat('%',#{param2},'%')
+  </select>
+
+
+
+
+
+
+
+
+
+  <select id="getFinishedCourseByStudentSid" resultMap="BaseResultMap3" parameterType="java.lang.Integer" >
+    SELECT `course`.*,tId,score
+    FROM `course`,`coursestudent`
+    WHERE `course`.`cId`=`coursestudent`.`cId`
+      AND TYPE=1
+      AND sid=#{sid}
+  </select>
+
+
+  <select id="checkCourseFuzzyStudent" resultMap="BaseResultMap2" >
+    SELECT DISTINCT  *
+    FROM
+      (SELECT `course`.*,tId
+       FROM `course`,`teachr-course`
+       WHERE `course`.`cId`=`teachr-course`.`cId` ) A
+    WHERE cid NOT IN(SELECT cid
+                     FROM `coursestudent`
+                     WHERE sid=#{param1})
+            AND A.cName LIKE concat('%',#{param2},'%')
+
+  </select>
+
+
+
+
+  <select id="getAllCourseByStudentSid" resultMap="BaseResultMap2" parameterType="java.lang.Integer" >
+    SELECT DISTINCT *
+    FROM
+      (SELECT `course`.*,tId
+       FROM `course`,`teachr-course`
+       WHERE `course`.`cId`=`teachr-course`.`cId` ) A
+    WHERE cid NOT IN(SELECT cid
+                     FROM `coursestudent`
+                     WHERE sid=#{sid,jdbcType=INTEGER})
+
+  </select>
+
+
+
+  <select id="getChosenCourseByStudentSid" resultMap="BaseResultMap2" parameterType="java.lang.Integer" >
+    SELECT `course`.*,tId
+    FROM `course`,`coursestudent`
+    WHERE `course`.`cId`=`coursestudent`.`cId`
+      AND TYPE=0
+      AND sid=#{sid}
+
+  </select>
+
+
+
+
+
+  <select id="checkCourseChosenFuzzyStudent" resultMap="BaseResultMap2" >
+    select * from
+    (SELECT `course`.*,tId
+    FROM `course`,`coursestudent`
+    WHERE `course`.`cId`=`coursestudent`.`cId`
+      AND TYPE=0
+      AND sid=#{sid}) A
+    where A.cName  LIKE concat('%',#{param2},'%')
+  </select>
+
+
+
+  <select id="checkCoursenameFinishedfuzzy" resultMap="BaseResultMap3" >
+    select * from
+      (SELECT `course`.*,tId,score
+       FROM `course`,`coursestudent`
+       WHERE `course`.`cId`=`coursestudent`.`cId`
+         AND TYPE=1
+         AND sid=#{sid}) A
+    where A.cName  LIKE concat('%',#{param2},'%')
+  </select>
+
+
+
+
+
+
+  <select id="getCourseFuzzy" resultMap="BaseResultMap2" parameterType="string" >
+    SELECT *
+    FROM
+      (SELECT `course`.*,tId
+       FROM `course`,`teachr-course`
+       WHERE `course`.`cId`=`teachr-course`.`cId` ) A
+    WHERE    (A.cPlace like concat('%',#{keyWord},'%'))
+       OR (A.cName LIKE concat('%',#{keyWord},'%'))
+
+  </select>
+
+
+
+
+
+<!--  WHERE    (A.cPlace LIKE "%#{keyWord,jdbcType=VARCHAR}%")-->
+<!--  OR (A.cName LIKE "%#{keyWord,jdbcType=VARCHAR}%")-->
+<!--  OR (A.cName LIKE '%#{keyWord}%')-->
+
+  <select id="getCourseFuzzyInteger" resultMap="BaseResultMap2" parameterType="java.lang.Integer" >
+    SELECT *
+    FROM
+      (SELECT `course`.*,tId
+       FROM `course`,`teachr-course`
+       WHERE `course`.`cId`=`teachr-course`.`cId` ) A
+    WHERE (A.cId=#{key,jdbcType=INTEGER})
+       OR (A.tId=#{key,jdbcType=INTEGER})
+
+  </select>
+
+
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from course
+    where cId = #{cid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="org.wumbuk.entity.Course" >
+    insert into course (cId, cName, cTime, 
+      cPlace, cWeek, cType, 
+      cValue, dId)
+    values (#{cid,jdbcType=INTEGER}, #{cname,jdbcType=CHAR}, #{ctime,jdbcType=INTEGER}, 
+      #{cplace,jdbcType=CHAR}, #{cweek,jdbcType=INTEGER}, #{ctype,jdbcType=INTEGER}, 
+      #{cvalue,jdbcType=INTEGER}, #{did,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="org.wumbuk.entity.Course" >
+    insert into course
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="cid != null" >
+        cId,
+      </if>
+      <if test="cname != null" >
+        cName,
+      </if>
+      <if test="ctime != null" >
+        cTime,
+      </if>
+      <if test="cplace != null" >
+        cPlace,
+      </if>
+      <if test="cweek != null" >
+        cWeek,
+      </if>
+      <if test="ctype != null" >
+        cType,
+      </if>
+      <if test="cvalue != null" >
+        cValue,
+      </if>
+      <if test="did != null" >
+        dId,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="cid != null" >
+        #{cid,jdbcType=INTEGER},
+      </if>
+      <if test="cname != null" >
+        #{cname,jdbcType=CHAR},
+      </if>
+      <if test="ctime != null" >
+        #{ctime,jdbcType=INTEGER},
+      </if>
+      <if test="cplace != null" >
+        #{cplace,jdbcType=CHAR},
+      </if>
+      <if test="cweek != null" >
+        #{cweek,jdbcType=INTEGER},
+      </if>
+      <if test="ctype != null" >
+        #{ctype,jdbcType=INTEGER},
+      </if>
+      <if test="cvalue != null" >
+        #{cvalue,jdbcType=INTEGER},
+      </if>
+      <if test="did != null" >
+        #{did,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="org.wumbuk.entity.Course" >
+    update course
+    <set >
+      <if test="cname != null" >
+        cName = #{cname,jdbcType=CHAR},
+      </if>
+      <if test="ctime != null" >
+        cTime = #{ctime,jdbcType=INTEGER},
+      </if>
+      <if test="cplace != null" >
+        cPlace = #{cplace,jdbcType=CHAR},
+      </if>
+      <if test="cweek != null" >
+        cWeek = #{cweek,jdbcType=INTEGER},
+      </if>
+      <if test="ctype != null" >
+        cType = #{ctype,jdbcType=INTEGER},
+      </if>
+      <if test="cvalue != null" >
+        cValue = #{cvalue,jdbcType=INTEGER},
+      </if>
+      <if test="did != null" >
+        dId = #{did,jdbcType=INTEGER},
+      </if>
+    </set>
+    where cId = #{cid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="org.wumbuk.entity.Course" >
+    update course
+    set cName = #{cname,jdbcType=CHAR},
+      cTime = #{ctime,jdbcType=INTEGER},
+      cPlace = #{cplace,jdbcType=CHAR},
+      cWeek = #{cweek,jdbcType=INTEGER},
+      cType = #{ctype,jdbcType=INTEGER},
+      cValue = #{cvalue,jdbcType=INTEGER},
+      dId = #{did,jdbcType=INTEGER}
+    where cId = #{cid,jdbcType=INTEGER}
+  </update>
+
+
+
+
+
+</mapper>

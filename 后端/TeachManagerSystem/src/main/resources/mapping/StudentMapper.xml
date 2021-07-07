@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.wumbuk.dao.StudentMapper" >
+  <resultMap id="BaseResultMap" type="org.wumbuk.entity.Student" >
+    <id column="sId" property="sid" jdbcType="INTEGER" />
+    <result column="sName" property="sname" jdbcType="CHAR" />
+    <result column="sSex" property="ssex" jdbcType="INTEGER" />
+    <result column="sBirth" property="sbirth" jdbcType="TIMESTAMP" />
+    <result column="sEntryTime" property="sentrytime" jdbcType="TIMESTAMP" />
+    <result column="sDepature" property="sdepature" jdbcType="INTEGER" />
+    <result column="avatar" property="avatar" jdbcType="CHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    sId, sName, sSex, sBirth, sEntryTime, sDepature
+  </sql>
+
+
+
+
+
+
+  <select id="getStudentFuzzy" resultMap="BaseResultMap" parameterType="string" >
+    select
+    <include refid="Base_Column_List" />
+    from student
+    where sid=#{keyWord}
+        or sname like concat('%',#{keyWord},'%')
+  </select>
+
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from student
+    where sId = #{sid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from student
+    where sId = #{sid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="org.wumbuk.entity.Student" >
+    insert into student (sId, sName, sSex, 
+      sBirth, sEntryTime, sDepature
+      )
+    values (#{sid,jdbcType=INTEGER}, #{sname,jdbcType=CHAR}, #{ssex,jdbcType=INTEGER}, 
+      #{sbirth,jdbcType=TIMESTAMP}, #{sentrytime,jdbcType=TIMESTAMP}, #{sdepature,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="org.wumbuk.entity.Student" >
+    insert into student
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="sid != null" >
+        sId,
+      </if>
+      <if test="sname != null" >
+        sName,
+      </if>
+      <if test="ssex != null" >
+        sSex,
+      </if>
+      <if test="sbirth != null" >
+        sBirth,
+      </if>
+      <if test="sentrytime != null" >
+        sEntryTime,
+      </if>
+      <if test="sdepature != null" >
+        sDepature,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="sid != null" >
+        #{sid,jdbcType=INTEGER},
+      </if>
+      <if test="sname != null" >
+        #{sname,jdbcType=CHAR},
+      </if>
+      <if test="ssex != null" >
+        #{ssex,jdbcType=INTEGER},
+      </if>
+      <if test="sbirth != null" >
+        #{sbirth,jdbcType=TIMESTAMP},
+      </if>
+      <if test="sentrytime != null" >
+        #{sentrytime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="sdepature != null" >
+        #{sdepature,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="org.wumbuk.entity.Student" >
+    update student
+    <set >
+      <if test="sname != null" >
+        sName = #{sname,jdbcType=CHAR},
+      </if>
+      <if test="ssex != null" >
+        sSex = #{ssex,jdbcType=INTEGER},
+      </if>
+      <if test="sbirth != null" >
+        sBirth = #{sbirth,jdbcType=TIMESTAMP},
+      </if>
+      <if test="sentrytime != null" >
+        sEntryTime = #{sentrytime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="sdepature != null" >
+        sDepature = #{sdepature,jdbcType=INTEGER},
+      </if>
+      <if test="avatar != null" >
+        avatar = #{avatar,jdbcType=CHAR},
+      </if>
+    </set>
+    where sId = #{sid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="org.wumbuk.entity.Student" >
+    update student
+    set sName = #{sname,jdbcType=CHAR},
+      sSex = #{ssex,jdbcType=INTEGER},
+      sBirth = #{sbirth,jdbcType=TIMESTAMP},
+      sEntryTime = #{sentrytime,jdbcType=TIMESTAMP},
+      sDepature = #{sdepature,jdbcType=INTEGER}
+    where sId = #{sid,jdbcType=INTEGER}
+  </update>
+</mapper>

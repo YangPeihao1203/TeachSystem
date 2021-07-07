@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.wumbuk.dao.TeachrCourseMapper" >
+  <resultMap id="BaseResultMap" type="org.wumbuk.entity.TeachrCourse" >
+    <result column="cId" property="cid" jdbcType="INTEGER" />
+    <result column="tId" property="tid" jdbcType="INTEGER" />
+  </resultMap>
+  <insert id="insert" parameterType="org.wumbuk.entity.TeachrCourse" >
+    insert into `teachr-course` (cId, tId)
+    values (#{cid,jdbcType=INTEGER}, #{tid,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="org.wumbuk.entity.TeachrCourse" >
+    insert into teachr-course
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="cid != null" >
+        cId,
+      </if>
+      <if test="tid != null" >
+        tId,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="cid != null" >
+        #{cid,jdbcType=INTEGER},
+      </if>
+      <if test="tid != null" >
+        #{tid,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+</mapper>
